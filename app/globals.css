@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ── Responsive helpers ── */
+.page-pad { padding: 20px 16px 40px; }
+
+@media (min-width: 481px) {
+  .page-pad { padding: 40px 24px; }
+}
+
+/* Horizontal scroll for wide tables */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Stack 2-column profile grid on very small phones */
+@media (max-width: 420px) {
+  .profile-grid-2 { grid-template-columns: 1fr !important; }
+}
+
+/* Stack 3-column inline form grids on mobile */
+@media (max-width: 600px) {
+  .form-grid-inline { grid-template-columns: 1fr !important; }
+}
