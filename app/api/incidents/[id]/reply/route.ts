@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
-import { createClient as createServerSupabase } from "../../../../../lib/supabase/server";
+import { createClient as createServerSupabase } from "../../../../lib/supabase/server";
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,9 +57,9 @@ export async function POST(
     .maybeSingle();
 
   if (incident) {
-    const supervisorUserId = (incident.company_members as { user_id: string } | null)?.user_id;
+    const supervisorUserId = (incident.company_members as unknown as { user_id: string } | null)?.user_id;
     const assocName = (() => {
-      const a = incident.associates as { first_name: string; last_name: string } | null;
+      const a = incident.associates as unknown as { first_name: string; last_name: string } | null;
       return a ? `${a.first_name} ${a.last_name}` : "A staff member";
     })();
 

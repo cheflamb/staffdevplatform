@@ -118,9 +118,9 @@ export default async function DashboardPage() {
   const role = membership.role as "owner" | "supervisor" | "associate";
   const companyId: string = membership.company_id;
   const locationId: string | null = membership.location_id ?? null;
-  const companyName = (membership.companies as CompanyRow)?.name ?? "";
-  const locationName   = (membership.locations as LocationRow)?.name    ?? null;
-  const locationLogo   = (membership.locations as LocationRow)?.logo_url ?? null;
+  const companyName = (membership.companies as unknown as CompanyRow)?.name ?? "";
+  const locationName   = (membership.locations as unknown as LocationRow)?.name    ?? null;
+  const locationLogo   = (membership.locations as unknown as LocationRow)?.logo_url ?? null;
 
   // Profile display name
   const { data: profile } = await supabase
@@ -175,7 +175,7 @@ export default async function DashboardPage() {
         .from("alert_settings")
         .select("flag_reason, notify_role, urgency")
         .eq("company_id", companyId);
-      alertSettings = (alertData ?? []) as AlertSettingRow[];
+      alertSettings = (alertData ?? []) as unknown as AlertSettingRow[];
 
       if (locationIds.length > 0) {
         const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
             .filter((s) => ["owner", "both"].includes(s.notify_role))
             .map((s) => s.flag_reason)
         );
-        flaggedCheckins = ((flagged ?? []) as FlaggedCheckinRow[]).filter((c) =>
+        flaggedCheckins = ((flagged ?? []) as unknown as FlaggedCheckinRow[]).filter((c) =>
           c.flag_reasons.some((r) => ownerReasons.size === 0 || ownerReasons.has(r))
         );
       }
@@ -208,7 +208,7 @@ export default async function DashboardPage() {
       .eq("status", "active")
       .order("last_name");
 
-    associates = (assocs as AssociateRow[]) ?? [];
+    associates = (assocs as unknown as AssociateRow[]) ?? [];
 
     const today = new Date().toISOString().split("T")[0];
     const nextWeek = new Date(Date.now() + 7 * 86_400_000)
@@ -224,14 +224,14 @@ export default async function DashboardPage() {
       .lte("scheduled_date", nextWeek)
       .order("scheduled_date");
 
-    upcomingCheckins = (checkins as CheckinRow[]) ?? [];
+    upcomingCheckins = (checkins as unknown as CheckinRow[]) ?? [];
 
     // Alert settings — which flags should supervisors see?
     const { data: alertData } = await supabase
       .from("alert_settings")
       .select("flag_reason, notify_role, urgency")
       .eq("company_id", companyId);
-    alertSettings = (alertData ?? []) as AlertSettingRow[];
+    alertSettings = (alertData ?? []) as unknown as AlertSettingRow[];
 
     const supervisorReasons = new Set(
       alertSettings
@@ -250,7 +250,7 @@ export default async function DashboardPage() {
         .gte("completed_at", thirtyDaysAgo)
         .order("completed_at", { ascending: false })
         .limit(20);
-      flaggedCheckins = ((flagged ?? []) as FlaggedCheckinRow[]).filter((c) =>
+      flaggedCheckins = ((flagged ?? []) as unknown as FlaggedCheckinRow[]).filter((c) =>
         c.flag_reasons.some((r) => supervisorReasons.has(r))
       );
     }
@@ -263,7 +263,7 @@ export default async function DashboardPage() {
       .eq("status", "completed")
       .order("completed_at", { ascending: false });
 
-    for (const row of (checkinHist ?? []) as LastCheckinRow[]) {
+    for (const row of (checkinHist ?? []) as unknown as LastCheckinRow[]) {
       if (!lastCheckinMap.has(row.associate_id)) {
         lastCheckinMap.set(row.associate_id, row.completed_at);
       }
@@ -278,7 +278,7 @@ export default async function DashboardPage() {
       .lt("scheduled_date", today)
       .order("scheduled_date");
 
-    overdueCheckins = (overdueData ?? []) as OverdueCheckinRow[];
+    overdueCheckins = (overdueData ?? []) as unknown as OverdueCheckinRow[];
 
     // New hires in first 95 days — 90-day milestone tracking
     const ninetyFiveDaysAgo = new Date(Date.now() - 95 * 86_400_000)
@@ -293,7 +293,7 @@ export default async function DashboardPage() {
       .gte("hire_date", ninetyFiveDaysAgo)
       .order("hire_date");
 
-    newHires = (nhData ?? []) as NewHireRow[];
+    newHires = (nhData ?? []) as unknown as NewHireRow[];
 
     if (newHires.length > 0) {
       const nhIds = newHires.map((a) => a.id);
@@ -303,7 +303,7 @@ export default async function DashboardPage() {
         .in("associate_id", nhIds);
 
       for (const p of planData ?? []) {
-        const comps = (p.ninety_day_completions ?? []) as Array<{
+        const comps = (p.ninety_day_completions ?? []) as unknown as Array<{
           status: string;
           ninety_day_milestones: { day_target: number } | null;
         }>;

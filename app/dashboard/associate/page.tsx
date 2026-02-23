@@ -501,7 +501,7 @@ export default async function AssociatePortalPage() {
                   }}
                 >
                   {progressionPlan.outcome === "advance_to_next"
-                    ? `Advancing toward ${(progressionPlan.positions as { title: string } | null)?.title ?? "next tier"}`
+                    ? `Advancing toward ${(progressionPlan.positions as unknown as { title: string } | null)?.title ?? "next tier"}`
                     : "Building in current role"}
                 </span>
               </div>

@@ -75,7 +75,7 @@ export async function GET(req: Request) {
   }
 
   // Verify same company
-  const companyId = (assoc.locations as { company_id: string } | null)?.company_id;
+  const companyId = (assoc.locations as unknown as { company_id: string } | null)?.company_id;
   if (companyId !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -86,7 +86,7 @@ export async function GET(req: Request) {
   }
 
   // Determine role level
-  const pos = assoc.positions as { is_lead: boolean; is_managerial: boolean } | null;
+  const pos = assoc.positions as unknown as { is_lead: boolean; is_managerial: boolean } | null;
   const roleLevel = getRoleLevel(pos?.is_lead ?? false, pos?.is_managerial ?? false);
 
   // Get prompt IDs used in the last 2 completed check-ins for this associate

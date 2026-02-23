@@ -184,7 +184,7 @@ export default function AssociateDetailPage() {
           .select("id, name")
           .eq("company_id", m.company_id)
           .order("name");
-        setCompanyLocations((locs ?? []) as LocationOption[]);
+        setCompanyLocations((locs ?? []) as unknown as LocationOption[]);
       }
 
       // Fetch associate
@@ -202,7 +202,7 @@ export default function AssociateDetailPage() {
         return;
       }
 
-      const a = assoc as AssociateDetail;
+      const a = assoc as unknown as AssociateDetail;
       setAssociate(a);
       setFirstName(a.first_name);
       setLastName(a.last_name);
@@ -231,8 +231,8 @@ export default function AssociateDetailPage() {
           .order("sort_order"),
       ]);
       setDepartments(depts ?? []);
-      setPositions((pos ?? []) as Position[]);
-      setStations((sta ?? []) as Station[]);
+      setPositions((pos ?? []) as unknown as Position[]);
+      setStations((sta ?? []) as unknown as Station[]);
 
       // Check-in history for this associate
       const { data: history } = await supabase
@@ -242,7 +242,7 @@ export default function AssociateDetailPage() {
         .eq("status", "completed")
         .order("completed_at", { ascending: false })
         .limit(25);
-      setCheckinHistory((history ?? []) as CheckinHistoryRow[]);
+      setCheckinHistory((history ?? []) as unknown as CheckinHistoryRow[]);
 
       // Incident / discipline record (all-time history, most recent first)
       const { data: incidentData } = await supabase
@@ -250,7 +250,7 @@ export default function AssociateDetailPage() {
         .select("id, date, type, description, associate_response, created_at, company_members(profiles(full_name))")
         .eq("associate_id", associateId)
         .order("date", { ascending: false });
-      setIncidents((incidentData ?? []) as IncidentRow[]);
+      setIncidents((incidentData ?? []) as unknown as IncidentRow[]);
 
       // Active (non-completed) annual review for this associate
       const { data: reviewData } = await supabase
@@ -464,7 +464,7 @@ export default function AssociateDetailPage() {
         .select("id, date, type, description, associate_response, created_at, company_members(profiles(full_name))")
         .eq("associate_id", associateId)
         .order("date", { ascending: false });
-      setIncidents((data ?? []) as IncidentRow[]);
+      setIncidents((data ?? []) as unknown as IncidentRow[]);
     } catch (err) {
       setIncidentError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -1140,7 +1140,7 @@ export default function AssociateDetailPage() {
                 {incidents.map((inc) => {
                   const meta = TYPE_META[inc.type] ?? { label: inc.type, bg: "#f3f4f6", color: "#374151" };
                   const isActive = inc.type !== "commendation" && (inc.date >= cutoff);
-                  const recordedBy = (inc.company_members as { profiles: { full_name: string | null } | null } | null)?.profiles?.full_name ?? "Supervisor";
+                  const recordedBy = (inc.company_members as unknown as { profiles: { full_name: string | null } | null } | null)?.profiles?.full_name ?? "Supervisor";
                   return (
                     <div
                       key={inc.id}

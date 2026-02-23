@@ -111,7 +111,7 @@ export default async function AnalyticsPage() {
     .eq("company_id", companyId)
     .order("name");
 
-  const locations: LocationRow[] = (locationData ?? []) as LocationRow[];
+  const locations: LocationRow[] = (locationData ?? []) as unknown as LocationRow[];
   const locationIds = locations.map((l) => l.id);
   const locationNameMap = new Map(locations.map((l) => [l.id, l.name]));
 
@@ -129,7 +129,7 @@ export default async function AnalyticsPage() {
       .in("location_id", locationIds)
       .gte("scheduled_date", ninetyDaysAgo)
       .lte("scheduled_date", today);
-    checkinRows = (ciData ?? []) as CheckinAnalyticsRow[];
+    checkinRows = (ciData ?? []) as unknown as CheckinAnalyticsRow[];
   }
 
   // ── Step 3: self-assessments, last 90 days ────────────────────────────────
@@ -137,14 +137,9 @@ export default async function AnalyticsPage() {
   if (locationIds.length > 0) {
     const { data: saData } = await supabaseAdmin
       .from("self_assessments")
-      .select(
-        "talk_ratio_score, listening_score, question_quality_score, " +
-        "emotional_acknowledgement_score, paraphrasing_score, coaching_score, " +
-        "distraction_score, next_step_score, value_score, " +
-        "check_ins!inner(location_id, completed_at)"
-      )
+      .select("talk_ratio_score, listening_score, question_quality_score, emotional_acknowledgement_score, paraphrasing_score, coaching_score, distraction_score, next_step_score, value_score, check_ins!inner(location_id, completed_at)")
       .gte("check_ins.completed_at", new Date(Date.now() - 90 * 86_400_000).toISOString());
-    assessmentRows = (saData ?? []) as SelfAssessmentRow[];
+    assessmentRows = (saData ?? []) as unknown as SelfAssessmentRow[];
     // Filter to this company's locations (the join doesn't filter by location_id directly)
     assessmentRows = assessmentRows.filter((r) =>
       r.check_ins && locationIds.includes(r.check_ins.location_id)

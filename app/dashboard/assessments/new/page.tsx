@@ -50,7 +50,7 @@ export default async function NewAssessmentPage({
 
   if (!assoc) redirect("/dashboard");
 
-  const locData = assoc.locations as { company_id: string } | null;
+  const locData = assoc.locations as unknown as { company_id: string } | null;
   if (locData?.company_id !== member.company_id) redirect("/dashboard");
 
   if (!assoc.position_id) redirect(`/dashboard/associates/${associate_id}`);
@@ -144,7 +144,7 @@ export default async function NewAssessmentPage({
     .order("sort_order");
 
   const questions: AssessmentQuestion[] = (rawQuestions ?? []).map((q) => {
-    const lib = q.question_library as {
+    const lib = q.question_library as unknown as {
       skill_category: string;
       question_text: string;
       question_type: "written" | "practical" | "yes_no";

@@ -44,7 +44,7 @@ export async function PATCH(
 
   if (!checkin) return NextResponse.json({ error: "Check-in not found" }, { status: 404 });
 
-  const companyId = (checkin.locations as { company_id: string } | null)?.company_id;
+  const companyId = (checkin.locations as unknown as { company_id: string } | null)?.company_id;
   if (companyId !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

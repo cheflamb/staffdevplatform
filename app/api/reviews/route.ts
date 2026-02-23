@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Associate not found" }, { status: 404 });
   }
 
-  const locationData = assoc.locations as { company_id: string } | null;
+  const locationData = assoc.locations as unknown as { company_id: string } | null;
   if (locationData?.company_id !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

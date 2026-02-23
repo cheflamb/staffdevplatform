@@ -115,7 +115,7 @@ export default async function ReviewPage({
     .eq("location_id", review.location_id)
     .order("sort_order");
 
-  const skillAreas: SkillArea[] = (skillAreasRaw ?? []) as SkillArea[];
+  const skillAreas: SkillArea[] = (skillAreasRaw ?? []) as unknown as SkillArea[];
 
   // All responses for this review
   const { data: responsesRaw } = await supabaseAdmin
@@ -123,7 +123,7 @@ export default async function ReviewPage({
     .select("skill_area_id, respondent_type, score")
     .eq("review_id", reviewId);
 
-  const responses: ReviewResponse[] = (responsesRaw ?? []) as ReviewResponse[];
+  const responses: ReviewResponse[] = (responsesRaw ?? []) as unknown as ReviewResponse[];
 
   // All narratives for this review
   const { data: narrativesRaw } = await supabaseAdmin
@@ -131,7 +131,7 @@ export default async function ReviewPage({
     .select("question_key, respondent_type, response_text")
     .eq("review_id", reviewId);
 
-  const narratives: ReviewNarrative[] = (narrativesRaw ?? []) as ReviewNarrative[];
+  const narratives: ReviewNarrative[] = (narrativesRaw ?? []) as unknown as ReviewNarrative[];
 
   // Helper partitions
   const selfResponses = responses.filter((r) => r.respondent_type === "self");
@@ -151,13 +151,13 @@ export default async function ReviewPage({
       .maybeSingle();
 
     if (planRaw) {
-      plan = planRaw as ProgressionPlan;
+      plan = planRaw as unknown as ProgressionPlan;
       const { data: msRaw } = await supabaseAdmin
         .from("progression_milestones")
         .select("day_target, goal_text")
         .eq("plan_id", planRaw.id)
         .order("day_target");
-      milestones = (msRaw ?? []) as ProgressionMilestone[];
+      milestones = (msRaw ?? []) as unknown as ProgressionMilestone[];
     }
   }
 

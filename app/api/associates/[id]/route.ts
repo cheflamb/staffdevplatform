@@ -47,7 +47,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Associate not found" }, { status: 404 });
   }
 
-  const companyId = (assoc.locations as { company_id: string } | null)?.company_id;
+  const companyId = (assoc.locations as unknown as { company_id: string } | null)?.company_id;
   if (companyId !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

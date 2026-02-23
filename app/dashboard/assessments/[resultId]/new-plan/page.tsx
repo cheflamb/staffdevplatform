@@ -57,7 +57,7 @@ export default async function NewPlanPage({
     .maybeSingle();
 
   if (!assoc) redirect("/dashboard");
-  const locData = assoc.locations as { company_id: string } | null;
+  const locData = assoc.locations as unknown as { company_id: string } | null;
   if (locData?.company_id !== member.company_id) redirect("/dashboard");
 
   // Fetch target position title

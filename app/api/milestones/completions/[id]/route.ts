@@ -49,7 +49,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const plan = comp.ninety_day_plans as {
+  const plan = comp.ninety_day_plans as unknown as {
     location_id: string;
     locations: { company_id: string } | null;
   } | null;

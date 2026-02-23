@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 
@@ -163,7 +163,7 @@ function ScoreButton({ value, selected, onClick }: { value: number; selected: bo
 // ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
-export default function NewCheckinPage() {
+function NewCheckinPageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const associateId  = searchParams.get("associateId") ?? "";
@@ -242,7 +242,7 @@ export default function NewCheckinPage() {
         .maybeSingle();
 
       if (!assoc) { setInitError("Associate not found."); setLoading(false); return; }
-      setAssociate(assoc as Associate);
+      setAssociate(assoc as unknown as Associate);
 
       // Check for an open scheduled milestone for this associate
       const { data: scheduled } = await supabase
@@ -272,7 +272,7 @@ export default function NewCheckinPage() {
         .from("prompts")
         .select("id, category, prompt_text")
         .order("sort_order");
-      setAllPrompts((pAll ?? []) as Prompt[]);
+      setAllPrompts((pAll ?? []) as unknown as Prompt[]);
 
       setLoading(false);
     })();
@@ -885,5 +885,13 @@ export default function NewCheckinPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function NewCheckinPage() {
+  return (
+    <Suspense>
+      <NewCheckinPageInner />
+    </Suspense>
   );
 }

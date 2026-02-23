@@ -49,7 +49,7 @@ export async function POST(
   }
 
   // Verify location access
-  const companyId = (associate.locations as { company_id: string } | null)?.company_id;
+  const companyId = (associate.locations as unknown as { company_id: string } | null)?.company_id;
   if (companyId !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

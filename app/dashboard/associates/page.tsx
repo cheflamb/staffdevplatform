@@ -58,7 +58,7 @@ export default async function AssociateRosterPage() {
     location_id: string | null;
   };
 
-  const locationMeta = (membership.locations as { name: string; logo_url: string | null } | null);
+  const locationMeta = (membership.locations as unknown as { name: string; logo_url: string | null } | null);
 
   if (!["owner", "supervisor"].includes(role)) redirect("/dashboard");
 
@@ -75,7 +75,7 @@ export default async function AssociateRosterPage() {
       )
       .eq("location_id", location_id)
       .order("last_name");
-    rows = (data ?? []) as AssociateRow[];
+    rows = (data ?? []) as unknown as AssociateRow[];
   } else if (role === "owner") {
     const { data: locs } = await supabase
       .from("locations")
@@ -92,7 +92,7 @@ export default async function AssociateRosterPage() {
         )
         .in("location_id", locationIds)
         .order("last_name");
-      rows = (data ?? []) as AssociateRow[];
+      rows = (data ?? []) as unknown as AssociateRow[];
     }
   }
 

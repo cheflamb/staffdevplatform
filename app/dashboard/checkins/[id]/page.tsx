@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { createClient } from "../../../../lib/supabase/client";
+import { createClient } from "../../../lib/supabase/client";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -154,9 +154,9 @@ export default function CheckinDetailPage() {
         return;
       }
 
-      setCheckin(ci as CheckinDetail);
-      setPrompts((cp ?? []) as CheckinPrompt[]);
-      setSelfAssess(sa as SelfAssessment | null);
+      setCheckin(ci as unknown as CheckinDetail);
+      setPrompts((cp ?? []) as unknown as CheckinPrompt[]);
+      setSelfAssess(sa as unknown as SelfAssessment | null);
       if (ci.review_note) setReviewNote(ci.review_note);
       setLoading(false);
     })();

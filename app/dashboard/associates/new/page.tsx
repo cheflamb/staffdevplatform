@@ -115,7 +115,7 @@ export default function NewAssociatePage() {
       ]);
       setDepartments(depts ?? []);
       setPositions(pos ?? []);
-      setStations((sta ?? []) as Station[]);
+      setStations((sta ?? []) as unknown as Station[]);
       setDepartmentId("");
       setPositionId("");
       setStationId("");

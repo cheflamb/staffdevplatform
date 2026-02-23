@@ -45,16 +45,13 @@ export async function GET(
   // Verify associate belongs to caller's company
   const { data: assoc } = await supabaseAdmin
     .from("associates")
-    .select(
-      "id, first_name, last_name, hire_date, status, location_id, " +
-      "positions(title), departments(name), stations(name), locations(name, company_id)"
-    )
+    .select("id, first_name, last_name, hire_date, status, location_id, positions(title), departments(name), stations(name), locations(name, company_id)")
     .eq("id", id)
     .maybeSingle();
 
   if (!assoc) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const locData = assoc.locations as { name: string; company_id: string } | null;
+  const locData = assoc.locations as unknown as { name: string; company_id: string } | null;
   if (locData?.company_id !== member.company_id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -113,9 +110,9 @@ export async function GET(
     last_name:   assoc.last_name,
     hire_date:   assoc.hire_date,
     status:      assoc.status,
-    positions:   assoc.positions as { title: string } | null,
-    departments: assoc.departments as { name: string } | null,
-    stations:    assoc.stations as { name: string } | null,
+    positions:   assoc.positions as unknown as { title: string } | null,
+    departments: assoc.departments as unknown as { name: string } | null,
+    stations:    assoc.stations as unknown as { name: string } | null,
     locations:   locData ? { name: locData.name } : null,
   };
 
@@ -123,23 +120,24 @@ export async function GET(
     year: "numeric", month: "long", day: "numeric",
   });
 
+  const pdfElement = React.createElement(AssociateRecordPDF, {
+    associate,
+    incidents:   (incidents ?? []) as PDFIncident[],
+    checkins:    (checkins  ?? []) as PDFCheckin[],
+    reviews:     (reviews   ?? []) as PDFReview[],
+    assessments: (assessments ?? []) as unknown as PDFAssessment[],
+    plans:       (plans ?? []) as unknown as PDFProgressionPlan[],
+    generatedAt,
+  });
   const buffer = await renderToBuffer(
-    React.createElement(AssociateRecordPDF, {
-      associate,
-      incidents:   (incidents ?? []) as PDFIncident[],
-      checkins:    (checkins  ?? []) as PDFCheckin[],
-      reviews:     (reviews   ?? []) as PDFReview[],
-      assessments: (assessments ?? []) as PDFAssessment[],
-      plans:       (plans ?? []) as PDFProgressionPlan[],
-      generatedAt,
-    })
+    pdfElement as unknown as Parameters<typeof renderToBuffer>[0]
   );
 
   const filename = `${assoc.first_name}-${assoc.last_name}-record.pdf`
     .replace(/[^a-z0-9-]/gi, "-")
     .toLowerCase();
 
-  return new Response(buffer, {
+  return new Response(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${filename}"`,

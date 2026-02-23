@@ -133,7 +133,7 @@ export default function MilestonePlanPage() {
     const displayItems: MilestoneDisplayItem[] = (milestones ?? []).map((m) => {
       const milestoneDate = new Date(hire.getTime() + m.day_target * 86_400_000);
       const daysFromNow   = Math.floor((milestoneDate.getTime() - today.getTime()) / 86_400_000);
-      const completion    = ((completions ?? []) as CompletionRow[]).find(
+      const completion    = ((completions ?? []) as unknown as CompletionRow[]).find(
         (c) => c.milestone_id === m.id
       ) ?? null;
       const checklist = ((checklistItems ?? []) as { id: string; milestone_id: string; item_text: string; sort_order: number }[])
@@ -194,7 +194,7 @@ export default function MilestonePlanPage() {
         .maybeSingle();
 
       if (!assoc) { setError("Associate not found."); setLoading(false); return; }
-      setAssociate(assoc as AssociateInfo);
+      setAssociate(assoc as unknown as AssociateInfo);
 
       const { data: planData } = await supabase
         .from("ninety_day_plans")
@@ -203,7 +203,7 @@ export default function MilestonePlanPage() {
         .maybeSingle();
 
       if (planData) {
-        setPlan(planData as PlanData);
+        setPlan(planData as unknown as PlanData);
         await loadPlan(planData.id, planData.department_type as "BOH" | "FOH", assoc.hire_date);
       }
 
@@ -235,7 +235,7 @@ export default function MilestonePlanPage() {
         .maybeSingle();
 
       if (planData && associate) {
-        setPlan(planData as PlanData);
+        setPlan(planData as unknown as PlanData);
         await loadPlan(planData.id, planData.department_type as "BOH" | "FOH", associate.hire_date);
       }
     } catch (err) {
