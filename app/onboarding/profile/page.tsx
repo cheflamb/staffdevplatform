@@ -68,7 +68,7 @@ export default function ProfileSetupPage() {
       });
       const json = await res.json() as { error?: string };
       if (!res.ok) throw new Error(json.error ?? "Failed to save");
-      router.replace("/dashboard");
+      router.replace("/onboarding/invite-gm");
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Something went wrong");
       setBusy(false);
@@ -76,7 +76,7 @@ export default function ProfileSetupPage() {
   }
 
   function onSkip() {
-    router.replace("/dashboard");
+    router.replace("/onboarding/invite-gm");
   }
 
   if (loading) {
@@ -93,21 +93,21 @@ export default function ProfileSetupPage() {
     <main style={{ padding: 24, maxWidth: 480, margin: "0 auto" }}>
       {/* Progress indicator */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
-        {["Company", "Profile"].map((label, i) => (
+        {["Company", "Profile", "Invite Team"].map((label, i) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{
               width: 24, height: 24, borderRadius: "50%",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 11, fontWeight: 700,
-              backgroundColor: i === 0 ? "#111" : "#374151",
-              color: "white",
+              backgroundColor: i === 0 ? "#111" : i === 1 ? "#374151" : "#e5e7eb",
+              color: i < 2 ? "white" : "#9ca3af",
             }}>
-              {i === 0 ? "✓" : "2"}
+              {i === 0 ? "✓" : i === 1 ? "2" : "3"}
             </div>
             <span style={{ fontSize: 12, fontWeight: i === 1 ? 600 : 400, color: i === 1 ? "#111" : "#9ca3af" }}>
               {label}
             </span>
-            {i < 1 && <div style={{ width: 20, height: 1, backgroundColor: "#e5e7eb" }} />}
+            {i < 2 && <div style={{ width: 20, height: 1, backgroundColor: "#e5e7eb" }} />}
           </div>
         ))}
       </div>
@@ -176,7 +176,7 @@ export default function ProfileSetupPage() {
             fontSize: 15,
           }}
         >
-          {busy ? "Saving…" : "Save & go to dashboard"}
+          {busy ? "Saving…" : "Save & continue"}
         </button>
 
         <button

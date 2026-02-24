@@ -92,7 +92,7 @@ export default function OnboardingPage() {
     <main style={{ padding: 24, maxWidth: 520, margin: "0 auto" }}>
       {/* Progress indicator */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
-        {["Company", "Profile"].map((label, i) => (
+        {["Company", "Profile", "Invite Team"].map((label, i) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{
               width: 24, height: 24, borderRadius: "50%",
@@ -106,7 +106,7 @@ export default function OnboardingPage() {
             <span style={{ fontSize: 12, fontWeight: i === 0 ? 600 : 400, color: i === 0 ? "#111" : "#9ca3af" }}>
               {label}
             </span>
-            {i < 1 && <div style={{ width: 20, height: 1, backgroundColor: "#e5e7eb" }} />}
+            {i < 2 && <div style={{ width: 20, height: 1, backgroundColor: "#e5e7eb" }} />}
           </div>
         ))}
       </div>
